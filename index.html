@@ -1,0 +1,127 @@
+<html>
+<head>
+    <title>Boop Game AI Player</title>
+</head>
+<body>
+    <h2>Boop Project</h2>
+    <img src="https://static.wixstatic.com/media/693f33_82e69d54f21d4b52b206558b090f1a7b~mv2.png/v1/fill/w_500,h_500,al_c,q_85,enc_avif,quality_auto/693f33_82e69d54f21d4b52b206558b090f1a7b~mv2.png" alt="boop: a cute but deceptively challenging abstract strategy game"/>
+    <p>
+        <a href="https://www.smirkanddagger.com/product-page/boop">boop.</a> is a board game by Smirk and Dagger in which two players take turns
+        placing cats or kittens on the board. Each piece "boops" adjacent pieces one space away.  Upgrade kittens to cats and get three cats in a row
+        to win!
+    </p>
+    <p>
+        Your job in this activity is to create the heuristic for an AI program to play boop. If there is time we will have a short
+        tournament to find the best AI boop player!  Unless you are a high-level boop player, your program should also be able
+        to beat you! You can work on this individually or in a group of two.
+    </p>
+    <p>
+        <h2>Step 1 - Get the code and familiarize yourself with the Boop Game</h2>
+        <ol>
+            <li>Review the <a href="https://officialgamerules.org/wp-content/uploads/2025/02/Boop-Instructions.pdf">official game rules</a></li>
+            <br/>
+            <li>We will play a modified version of boop. These changes simplify the possible moves.
+                <ul>
+                    <li>There are an infinite number of kittens instead of 8. This means you do not have the option to place a cat if 8 kittens are on the board.</li>
+                    <li>When a cat is pushed off the board, it does not go back into your pile to place. Instead it is lost. Since you have infinite kittens you are able to regenerate the lost cats.
+                    </li>
+                    <li>If there are multiple three in a row with at least one kitten, then instead of
+                        the player choosing which to graduate to cats, the three will always be the first
+                        that contains the piece with the smallest y coordinate followed by the smallest x coordinate.
+                    </li>
+                </ul>
+            </li>
+            <br/>
+            <li>Download and unzip the boop python project:  <a href="boop.zip">boop.zip</a></li>
+            <br/>
+            <li>You need python to run the program.  It is installed locally, but you need to be able to install pygame, which you probably don't have permissions to do with the default python.
+                I find an easy workaround is to use the <a href="https://thonny.org/">thonny</a> IDE, which you can download and run directly 
+                using the portable 64 bit variant.  After you download and unzip it, start thonny.exe and then 
+                you'll need to install pygame.  You can do this by going to "Tools" and "Manage Packages" and scroll down to "pygame" and
+                click on "Install".</li>
+            <br/>
+            <li>Run the program <i>main.py</i>. It is set up to play Human vs. Human, with players taking turns on the same computer.</li>
+            <br/>
+            <li>Play at least one game with a human neighbor to learn the rules.  While you are playing, think of game-playing strategies.</li>
+            </ol>
+
+             <h2>Step 2 - Create an AI Player</h2>
+              <ol>
+            <br/>
+            <li>Lines 22 and 23 in <i>main.py</i> determines if a player is human or AI. Try changing one or both to have the computer play itself!</li>
+            <br/>
+            <li>Line 19 is the depth the AI will search.  By default it is 1, which means it only tries to place 1 piece, evaluate the board, and pick the best move after placing its piece.  In other words, there is 
+                one ply of lookahead. 
+                Try increasing this number -- it will play a little better (but not great) but will take longer.  If you increase it to 2 then the AI will look ahead at a depth of two, which means it
+                will place its piece and then the opponent's piece before evaluating the board. You probably can't go beyond 4 or it will be too slow -- recall our discussion about game trees and exponential states!</li>
+            <br/>
+            <li>The AI plays very poorly because the heuristic function is mostly random!  The heuristic function starts at line 33 in <i>ai.py</i>. 
+                It is the function named <i>eval_board</i>. The heuristic will check if a player has won (lines 35-38) but if there 
+                is not a winning state then the AI just returns a random number on line 41!  This means that if there is a move that will win (or block the opponent from 
+                winning) within the search depth then the AI player will make that move, otherwise it will make a random move.<br/><br/>
+
+            For a much better starter heuristic, remove the random number on line 41 and in its place use this code:
+            <ul><br/><code><pre>
+        on_board_orange_cats = 0
+        orange_kittens = 0
+        on_board_black_cats = 0
+        black_kittens = 0
+
+        for y in range(BOARD_SIZE):
+            for x in range(BOARD_SIZE):
+                piece = board[y][x]
+                if piece is not None:
+                    if piece.color == PieceColor.ORANGE:
+                        if piece.type == PieceType.CAT:
+                            on_board_orange_cats += 1
+                        else:
+                            orange_kittens += 1
+                    else:
+                        if piece.type == PieceType.CAT:
+                            on_board_black_cats += 1
+                        else:
+                            black_kittens += 1
+
+        score = (4 * on_board_orange_cats + 2 * orange_cats + orange_kittens) - \
+                (4 * on_board_black_cats + 2 * black_cats + black_kittens)
+            </pre></code></ul><br/>
+            This code loops over all pieces on the simulated, lookahead board, and counts up how many cats and kittens are placed
+            for black and for orange.
+            The heuristic will assign the highest weight (4) to cats on the board, followed by cats that can be placed (2), and then
+            kittens on the board (1) with the lowest weight. Since the same calculation is subtracted for black, a large number means board is good
+            for orange, and a small or negative number favors black.    
+            <br/>
+            <br/>
+            When you have this heuristic implemented the computer AI player
+            should be much better!   Can you beat it when it searches to a depth of 3?
+            </li>
+             </ol>
+             
+            <h2>Step 3 - Make a better AI Player</h2>
+              <ol>
+            <li>
+            Design and implement a better heuristic than the one given. You could consider different weights, different values depending upon where pieces
+            are placed or at different stages of the game, how far away a player is from 3 in a row, how close pieces are together, etc.  
+            For example, you might want to favor acquiring cats at the early stage of the game more than the late stage.
+            It may also be the case that having pieces near the center are more valuable than pieces near the edge. These are just ideas! 
+            Design a better heuristic, implement it, and test it!
+            </li>
+            </ol>
+            <h2>Step 4 - Tournament</h2>
+            <ol>
+            <li>Our goal is to run a mini single-elimination tournament.  We'll make a list of participating players/teams and 
+                design a bracket.  It will be a coin flip who goes first.  Since we don't want to be here all night, your program should
+                make a move within 10 seconds (preferably less) which probably means a max lookahead of 3.  
+            </li>
+            <br/><Br/>
+            <li>To make the tournament go faster, there is code to run the game in server mode.  In server mode, you start the server first, and then
+                can connect two clients.  The first client to connect is orange, and the second is black.  There is already code, <i>client_ai.py</i>,
+                that will use the heuristic in <i>ai.py</i>. This will allow two AI programs to play each other automatically with no human
+                intervention.  See the README_ClientServer.pdf file for more information.  In thonny, I like to run multiple programs
+                by opening the shell multiple times from the "Tools" menu and starting programs from the command line.
+            </li>
+            </ol>
+        </ol>
+    </p>
+</body>
+</html>
