@@ -11,3 +11,8 @@ Our project focuses on utilizing various data structures to improve the decision
  - 3 Kittens in a row (get 3 cats)
  - 3 Cats in a row (win)
  - 8 Cats on the board (win)
+
+## Phases
+ - Simulation and Sequence Collection
+ - Generalization
+ - Hueristic Creation
