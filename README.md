@@ -14,9 +14,9 @@ Our project focuses on utilizing various data structures to improve the decision
 
 ## Phases
  - Simulation and Sequence Collection
-  - Consider collecting what cat or kitten was played
-  - Numerical values for what cat or kitten is on the board
-  - Benchmarking collection to identify average move time and average win time
+   - Consider collecting what cat or kitten was played
+   - Numerical values for what cat or kitten is on the board
+   - Benchmarking collection to identify average move time and average win time
  - Generalization
  - Hueristic Creation
 
