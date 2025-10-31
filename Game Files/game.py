@@ -135,6 +135,8 @@ class BoopGame:
             return (piece.color == PieceColor.BLACK)
 
     # Finds if there are three in a row with at least one kitten for the specified player
+    
+    # ----- This would be modified to include writing queue to Trie and/or file ----- # 
     def first_three_in_row(self, player_idx, board=None):
         if board is None:
             board = self.board
@@ -201,6 +203,8 @@ class BoopGame:
         return {'found': False}
 
     # Returns true if the specified player has won
+
+    # ----- This would be modified to include writing queue to Trie and/or file ----- # 
     def player_won(self, player_idx, board=None, orange_cats=None, black_cats=None):
         if board is None:
             board = self.board
@@ -261,6 +265,8 @@ class BoopGame:
             return False # Invalid move
 
         # Place piece
+
+        # ----- These values should be put into the queue ----- # 
         self.place_piece(x, y, Piece(piece_type, player_color))
 
         # Update cats count if a cat was placed
