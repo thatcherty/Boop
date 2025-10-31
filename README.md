@@ -1,5 +1,11 @@
 # Boop
-Our project focuses on utilizing various data structures to improve the decision-making and speed of an AI playing Boop.
+Our project is improving an AI agent’s playing ability of the game “Boop.” Boop is a board game that is available in a phyical form for but also exists digitally, written in python using pygame. The game has an AI agent player that utilizes minimax to create a search tree of moves. The board is 6x6, and building a search tree of all the possible moves gets computationally large and slow beyond a depth of 3 moves. 
+
+In our project, we want to prune the search tree so we can search deeper but maintain a reasonable speed of search. We will implement alpha beta pruning but also try to identify sequences that will lead to wins or highly adventageous moves. In the game, getting three kitten or cats in a row is important for winning, so we will use monte carlo sampling to find the sequences that will lead to this outcome. Games will be played between two automated agents randomly, and if a sequence leads to three in a row, the preceeding moves will be stored for analysis later. Using this analysis, we can create a heuristic function for the AI agent that encourages these advantageous sequences.
+
+To implement this Monte Carlo search, we will create a queue of moves. The size of the queue will be limited to the number of preceding steps we are looking at. When a three-in-a-row case is identified, we will store the content of the queue as a sequence in a trie. After a sufficient number of sequences are identified, we will analyze the trie for patterns leading to our target three-in-a-row sequence. Because our board has no particular directionality, we may be able to condense the number of sequences by combining duplicates of orientations.
+
+Using this data of sequences we will provide a heuristic that evaluates how good a players position is on the board by how close they are to our target sequences. We will also implement pruning to the search tree to eliminate moves that are unlikely to lead to our target.
 
 ## Rough Idea
 - Simulate several games of Boop, tracking moves taken using a queue
@@ -19,9 +25,3 @@ Our project focuses on utilizing various data structures to improve the decision
    - Benchmarking collection to identify average move time and average win time
  - Generalization
  - Hueristic Creation
-
-Summary Statement:
-Our project is improving an AI agent’s playing ability of the game “Boop.” Boop is a board game that is available in a phyical form for but also exists digitally written in python using pygame. The game has an AI agent player that utilizes minimax to create a search tree of moves. The board is 6x6 and building a search tree of all the possible moves gets computationally large and slow beyond a depth of 3 moves. 
-In our project we want to prune the search tree so we can search deeper but maintain a reasonable speed of search. We will implement alpha beta pruning but also try to identify sequences that will lead to wins or highly adventageous moves. In the game getting three kitten or cats in a row is important for winning so we will use monte carlo sampling to find the sequences that will lead to this outcome. Games will be played between two automated agents randomly and if a sequence leads to three in a row, the preceeding moves will be stored for analysis later. Using this analysis we can create a heuristic function for the AI agent that encourages these adventageous sequences.
-To implement this monte carlo search we will create a queue of moves. The size of the queue will be limited to the number of preceeding steps we are looking at. When a three in a row case is identified, we will store the content of the queue as a sequence in a trie. After a sufficient amount of sequences are identified we will analyze the trie for patterns leading to our target three in a row sequence. Because our board has no particular directionality we may be able to condense the number of sequences by combining duplicates of orientations.
-Using this data of sequences we will provide a heuristic that evaluates how good a players position is on the board by how close they are to our target sequences. We will also implement pruning to the search tree to eliminate moves that are unlikely to lead to our target.
