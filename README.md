@@ -25,3 +25,6 @@ Using this data of sequences we will provide a heuristic that evaluates how good
    - Benchmarking collection to identify average move time and average win time
  - Generalization
  - Hueristic Creation
+
+## Note
+The game itself, the sprites, sound effects, and general gameplay were not written by us. We have modified portions of the code to support new logic using new data structures in hopes of creating a more effective AI. The changes can be seen in the commit history.
