@@ -5,6 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
+from sequence_trie import Sequence
 
 # Main game class
 class BoopGame:
@@ -20,6 +21,7 @@ class BoopGame:
         self.black_last_selection = PieceType.KITTEN
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
+        self.seq = Sequence()
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -135,8 +137,6 @@ class BoopGame:
             return (piece.color == PieceColor.BLACK)
 
     # Finds if there are three in a row with at least one kitten for the specified player
-    
-    # ----- This would be modified to include writing queue to Trie and/or file ----- # 
     def first_three_in_row(self, player_idx, board=None):
         if board is None:
             board = self.board
@@ -203,8 +203,6 @@ class BoopGame:
         return {'found': False}
 
     # Returns true if the specified player has won
-
-    # ----- This would be modified to include writing queue to Trie and/or file ----- # 
     def player_won(self, player_idx, board=None, orange_cats=None, black_cats=None):
         if board is None:
             board = self.board
@@ -265,9 +263,10 @@ class BoopGame:
             return False # Invalid move
 
         # Place piece
-
-        # ----- These values should be put into the queue ----- # 
         self.place_piece(x, y, Piece(piece_type, player_color))
+
+        # Add Move to queue
+        self.seq.add_move(x,y, piece_type.name, current_player_idx)
 
         # Update cats count if a cat was placed
         if piece_type == PieceType.CAT:
@@ -294,12 +293,14 @@ class BoopGame:
         # Check for three in a row
         three_result = self.first_three_in_row(current_player_idx)
         if three_result['found']:
-            for px,py in three_result['positions']:
-                self.board[py][px] = None
+            #for px,py in three_result['positions']:
+            #    self.board[py][px] = None
             if current_player_idx == 0:
                 self.orange_cats += 3
+                self.win_msg = "Orange trio!"
             else:
                 self.black_cats += 3
+                self.win_msg = "Black trio!"
 
         # Check for win
         if self.player_won(current_player_idx):
@@ -323,12 +324,12 @@ class BoopGame:
            self.win_msg:
             return
 
-        print(f"AI {('Orange' if current_player_idx == 0 else 'Black')} is thinking...")
+        #print(f"AI {('Orange' if current_player_idx == 0 else 'Black')} is thinking...")
         best_move = self.ai.get_best_move(self.board, self.orange_cats, self.black_cats, current_player_idx)
 
         if best_move:
             x, y, piece_type = best_move
-            print(f"AI chooses to place {piece_type.name} at ({x},{y})")
+            #print(f"AI chooses to place {piece_type.name} at ({x},{y})")
             self.process_move(x, y, piece_type)
         else:
             print("AI found no moves, this should not happen unless board is full or game ended.")

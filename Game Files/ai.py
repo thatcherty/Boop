@@ -37,7 +37,6 @@ class BoopAI:
         if self.game.player_won(1, board, orange_cats, black_cats):
             return -10000
 
-        """ DELETE line below and replace with a better heuristic!! """
         on_board_orange_cats = 0
         orange_kittens = 0
         on_board_black_cats = 0
@@ -47,20 +46,28 @@ class BoopAI:
             for x in range(BOARD_SIZE):
                 piece = board[y][x]
                 if piece is not None:
-                        if piece.color == PieceColor.ORANGE:
-                            if piece.type == PieceType.CAT:
-                                on_board_orange_cats += 1
-                            else:
-                                orange_kittens += 1
+                    if piece.color == PieceColor.ORANGE:
+                        if piece.type == PieceType.CAT:
+                            on_board_orange_cats += 1
                         else:
-                            if piece.type == PieceType.CAT:
-                                on_board_black_cats += 1
-                            else:
-                                black_kittens += 1
-        score = (4 * on_board_orange_cats + 2 * orange_cats + orange_kittens) - \
-        (4 * on_board_black_cats + 2 * black_cats + black_kittens)
-        return score
+                            orange_kittens += 1
+                    else:
+                        if piece.type == PieceType.CAT:
+                            on_board_black_cats += 1
+                        else:
+                            black_kittens += 1
 
+        
+
+
+
+        score = (4 * on_board_orange_cats + 2 * orange_cats + orange_kittens) - \
+                (4 * on_board_black_cats + 2 * black_cats + black_kittens)
+        
+        score += orange_cats
+        score -= black_cats
+
+        return score
     
     # Minimax with alpha-beta pruning
     def minimax(self, board, orange_cats, black_cats, depth, alpha, beta, maximizing_player, current_player_idx):
@@ -212,5 +219,6 @@ class BoopAI:
                 if score < best_score:
                     best_score = score
                     best_move = move
-        
+        #print(score)
+
         return best_move

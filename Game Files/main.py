@@ -7,6 +7,7 @@ import sys
 from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
+from sequence_trie import Sequence_library
 
 # Main game loop and program start
 def run_game():
@@ -18,31 +19,46 @@ def run_game():
     # Configure game settings
     ai_depth_setting = 3 # AI search depth - CHANGE UP to 3 (4 will be slow)
 
-    game = BoopGame(ai_depth=ai_depth_setting)
-    game.player0 = PlayerType.AI   # Player 0 (Orange) type: HUMAN or AI
-    game.player1 = PlayerType.AI   # Player 1 (Black) type: HUMAN or AI
+    sequences = Sequence_library()
+    
+    rounds = 0
+    while rounds < 10: #A game lasts about 20 seconds using the gui
 
-    gui = GameGUI(game)
 
-    running = True
-    while running:
-        gui.handle_events() # Process user input
+        game = BoopGame(ai_depth=ai_depth_setting)
+        game.player0 = PlayerType.AI   # Player 0 (Orange) type: HUMAN or AI
+        game.player1 = PlayerType.AI   # Player 1 (Black) type: HUMAN or AI
 
-        # Handle AI turns
-        if game.win_msg == "":
-            current_player_type = game.player0 if game.whoseturn == 0 else game.player1
-            if current_player_type == PlayerType.AI:
-                gui.update_ai_thinking_status(True) # Show AI thinking on GUI
-                gui.draw() # Update display with "AI thinking" message
-                pygame.time.wait(200) # Small delay for visual effect
-                game.make_ai_move()
-                gui.update_ai_thinking_status(False) # AI finished thinking
-                # Re-draw the board immediately after AI move
-                gui.draw()
-                pygame.time.wait(500) # Small delay after AI move for player to see
-        
-        gui.draw() # Always draw the current game state
-        gui.clock.tick(60)  # 60 FPS
+        #gui = GameGUI(game)
+
+        while game.win_msg == "":
+            ##gui.handle_events() # Process user input
+
+            # Handle AI turns
+            if game.win_msg == "":
+                current_player_type = game.player0 if game.whoseturn == 0 else game.player1
+                if current_player_type == PlayerType.AI:
+                    ##gui.update_ai_thinking_status(True) # Show AI thinking on GUI
+                    ##gui.draw() # Update display with "AI thinking" message
+                    ##pygame.time.wait(200) # Small delay for visual effect
+                    game.make_ai_move()
+                    ##gui.update_ai_thinking_status(False) # AI finished thinking
+                    # Re-draw the board immediately after AI move
+                    ##gui.draw()
+                    #if game.win_msg != "":
+                    #    pygame.time.wait(2000) # Small delay after AI move for player to see
+            
+            ##gui.draw() # Always draw the current game state
+            ##gui.clock.tick(60)  # 60 FPS
+
+        sequences.add_sequence(game.seq, rounds)
+        rounds += 1
+
+    for key in sequences.sequences_dict:
+        print(key)
+        sequences.sequences_dict[key].print_data()
+        print()
+            
 
 if __name__ == "__main__":
     run_game()
