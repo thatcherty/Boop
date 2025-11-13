@@ -57,15 +57,11 @@ class BoopAI:
                         else:
                             black_kittens += 1
 
-        
-
-
-
         score = (4 * on_board_orange_cats + 2 * orange_cats + orange_kittens) - \
                 (4 * on_board_black_cats + 2 * black_cats + black_kittens)
         
-        score += orange_cats
-        score -= black_cats
+        score += (5 * orange_cats)
+        score -= (5 * black_cats)
 
         return score
     

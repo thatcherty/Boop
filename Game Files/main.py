@@ -4,10 +4,12 @@
 #
 import pygame
 import sys
+import data_output
 from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
 from sequence_trie import Sequence_library
+
 
 # Main game loop and program start
 def run_game():
@@ -22,7 +24,7 @@ def run_game():
     sequences = Sequence_library()
     
     rounds = 0
-    while rounds < 10: #A game lasts about 20 seconds using the gui
+    while rounds < 5: #A game lasts about 20 seconds using the gui
 
 
         game = BoopGame(ai_depth=ai_depth_setting)
@@ -51,12 +53,17 @@ def run_game():
             ##gui.draw() # Always draw the current game state
             ##gui.clock.tick(60)  # 60 FPS
 
-        sequences.add_sequence(game.seq, rounds)
+        sequences.add_sequence([game.seq.moves, game.seq.winner], rounds)
         rounds += 1
+        print(rounds)
+
+    #Store the initial dictionary as a JSON file
+    data_output.save_to_json(sequences.sequences_dict, 'sequences.json')
+    print("-" * 20)
 
     for key in sequences.sequences_dict:
         print(key)
-        sequences.sequences_dict[key].print_data()
+        print(sequences.sequences_dict[key])
         print()
             
 
