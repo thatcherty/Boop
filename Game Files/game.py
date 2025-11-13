@@ -5,7 +5,6 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
-from sequence_trie import Sequence
 
 # Main game class
 class BoopGame:
@@ -21,7 +20,7 @@ class BoopGame:
         self.black_last_selection = PieceType.KITTEN
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
-        self.seq = Sequence()
+        self.sequence = []
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -75,7 +74,7 @@ class BoopGame:
         playSound = False
         if board is None:
             board = self.board
-            playSound = True
+        #    playSound = True
 
         moves_made = []
 
@@ -266,7 +265,7 @@ class BoopGame:
         self.place_piece(x, y, Piece(piece_type, player_color))
 
         # Add Move to queue
-        self.seq.add_move(x,y, piece_type.name, current_player_idx)
+        self.sequence.append((x,y))
 
         # Update cats count if a cat was placed
         if piece_type == PieceType.CAT:
@@ -279,11 +278,11 @@ class BoopGame:
                 if self.black_cats == 0:
                     self.black_last_selection = PieceType.KITTEN
 
-        # Play sound for placement
-        if piece_type == PieceType.KITTEN and self.kitten_meow:
-            self.kitten_meow.play()
-        elif piece_type == PieceType.CAT and self.cat_meow:
-            self.cat_meow.play()
+        # # Play sound for placement
+        # if piece_type == PieceType.KITTEN and self.kitten_meow:
+        #     self.kitten_meow.play()
+        # elif piece_type == PieceType.CAT and self.cat_meow:
+        #     self.cat_meow.play()
 
         # Check for boop
         boop_results = self.check_boop(x, y)

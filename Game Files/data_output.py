@@ -1,6 +1,5 @@
 import json
 import os
-from sequence_trie import Sequence
 
 # Define the name of our JSON file
 FILENAME = 'sequences.json'
@@ -15,7 +14,7 @@ def save_to_json(data, filename):
         with open(filename, 'w', encoding='utf-8') as f:
             # json.dump() writes the data to the file object 'f'
             # indent=4 makes the JSON file human-readable (pretty-prints it)
-            json.dump(data, f, indent=0)
+            json.dump(data, f, indent=2)
         print("Data saved successfully.")
     except IOError as e:
         print(f"Error saving file: {e}")
