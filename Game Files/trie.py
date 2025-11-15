@@ -14,13 +14,11 @@ class trie:
     def add_seq(self, moves):
         level = self.three_in_a_row
 
-        for move in moves:
+        for move in range(len(moves) % 2, len(moves), 2):
             # may remove this if we create a hash elsewhere
-            square = self.pack_move(move)
+            square = self.pack_move(moves[move])
             level = level.setdefault(square, {})
         level[-1] = True # this is the leaf node
-
-    
 
 
 if __name__ == "__main__":
