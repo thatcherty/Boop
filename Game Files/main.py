@@ -8,7 +8,7 @@ import data_output
 from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
-
+from trie import trie
 
 # Main game loop and program start
 def run_game():
@@ -21,6 +21,7 @@ def run_game():
     ai_depth_setting = 3 # AI search depth - CHANGE UP to 3 (4 will be slow)
 
     sequences = []
+    game_trie = trie()
     
     rounds = 0
     while rounds < 10: #A game lasts about 20 seconds using the gui
@@ -53,13 +54,14 @@ def run_game():
             ##gui.clock.tick(60)  # 60 FPS
 
         sequences.append(game.sequence)
+        game_trie.add_seq(game.sequence)
         rounds += 1
         
         print(game.sequence)
         print(f"number of moves until trio: ", len(game.sequence))
 
-    #Store the initial dictionary as a JSON file
-    data_output.save_to_json(sequences, 'sequences.json')
+        #Store the initial dictionary as a JSON file
+        data_output.save_to_json(game.sequence, 'sequences.json')
     print("-" * 20)
 
             
