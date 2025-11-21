@@ -32,23 +32,16 @@ def append_output_file(outputString): #outputString represents an encoded sequen
     except IOError as e:
         print(f"Error saving file: {e}")
 
-def import_sequences(): #imports data from txt file and returns a list of sequences.
-    rawData = []
-    allSequences = []
+def import_sequences(game_trie): #imports data from txt file and returns a list of sequences.
     try:
         with open(FILENAME, 'r') as file:
             for line in file:
-                rawData.append(line.strip()) # .strip() removes leading/trailing whitespace, including newline characters
+                # insert the sequence into the trie
+                game_trie.insert_sequence(line.strip())
     except FileNotFoundError:
         print(f"Error: The file '{FILENAME}' was not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
-    for sequence in rawData:
-        decodedSequence = []
-        for char in sequence:
-            decodedSequence.append(decode_position(char))
-        allSequences.append(sequence)
-    return allSequences
 
 
 
@@ -66,17 +59,30 @@ class Trie:
         """
         Initializes the Trie with a root node.
         """
+        self.value = 0
+        self.frequency = 0
         self.root = TrieNode()
 
     def insert_sequence(self, sequence: str) -> None:
         """
-        Inserts a word into the Trie.
+        Inserts a sequences into the Trie.
         """
         current_node = self.root
+        length = len(sequence)
+        winner = length % 2 # odd length strings mean orange won, even mean black won
+
         for move in sequence:
             if move not in current_node.children:
                 current_node.children[move] = TrieNode()
             current_node = current_node.children[move]
+            self.frequency += 1
+
+            # considers the length and winner as weight
+            if winner:
+                self.value += (1 * length)
+            else:
+                self.value += (-1 * length)
+
 
     def search(self, sequence: str) -> bool:
         """
