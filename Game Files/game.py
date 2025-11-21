@@ -5,6 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
+from data_processing import encode_position, decode_position
 
 # Main game class
 class BoopGame:
@@ -20,7 +21,7 @@ class BoopGame:
         self.black_last_selection = PieceType.KITTEN
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
-        self.sequence = []
+        self.sequence = ""
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -31,7 +32,7 @@ class BoopGame:
         self.cheer = None
         if not pygame.mixer.get_init(): 
             pygame.mixer.init()
-        self._load_sounds() # Load sounds directly here
+        #self._load_sounds() # Load sounds directly here
 
     def _load_sounds(self):
         try:
@@ -264,8 +265,8 @@ class BoopGame:
         # Place piece
         self.place_piece(x, y, Piece(piece_type, player_color))
 
-        # Add Move to queue
-        self.sequence.append((x,y))
+        # Encode Move and Add Move to queue
+        self.sequence += encode_position(x,y)
 
         # Update cats count if a cat was placed
         if piece_type == PieceType.CAT:

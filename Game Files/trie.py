@@ -1,4 +1,5 @@
 import sys
+
 class trie:
     def __init__(self):
         self.three_in_a_row: dict[int, dict] = {}
