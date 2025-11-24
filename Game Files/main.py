@@ -7,8 +7,10 @@ import sys
 from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
-from trie import trie
+# from trie import trie
 from data_processing import append_output_file
+from data_processing import import_sequences
+from data_processing import Trie
 
 # Main game loop and program start
 def run_game():
@@ -20,8 +22,6 @@ def run_game():
     # Configure game settings
     ai_depth_setting = 3 # AI search depth - CHANGE UP to 3 (4 will be slow)
 
-    game_trie = trie()
-    
     rounds = 0
     while rounds < 5: #A game lasts about 20 seconds using the gui
 
@@ -42,7 +42,7 @@ def run_game():
                     ##gui.update_ai_thinking_status(True) # Show AI thinking on GUI
                     ##gui.draw() # Update display with "AI thinking" message
                     ##pygame.time.wait(200) # Small delay for visual effect
-                    game.make_ai_move()
+                    game.make_ai_move(0)
                     ##gui.update_ai_thinking_status(False) # AI finished thinking
                     # Re-draw the board immediately after AI move
                     ##gui.draw()
@@ -59,8 +59,9 @@ def run_game():
         print(game.sequence)
         print(f"number of moves until trio: ", len(game.sequence))
 
-        #Store the sequence in a csv file
+        #Store the sequence in a txt file
         append_output_file(game.sequence)
+
     print("-" * 20)
 
             

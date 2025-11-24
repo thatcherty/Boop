@@ -5,7 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
-from data_processing import encode_position, decode_position
+from data_processing import encode_position, decode_position, Trie, import_sequences
 
 # Main game class
 class BoopGame:
@@ -22,6 +22,10 @@ class BoopGame:
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.sequence = ""
+        self.game_trie = Trie()
+        self.current_node = self.game_trie.root
+
+        import_sequences(self.game_trie)
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -254,7 +258,7 @@ class BoopGame:
 
     # Process a player's move (human or AI)
     # Returns True if a move was successfully processed and the turn ended, False otherwise
-    def process_move(self, x, y, piece_type):
+    def process_move(self, x, y, piece_type, current_node):
         current_player_idx = self.whoseturn
         player_color = PieceColor.ORANGE if current_player_idx == 0 else PieceColor.BLACK
 
@@ -265,8 +269,16 @@ class BoopGame:
         # Place piece
         self.place_piece(x, y, Piece(piece_type, player_color))
 
-        # Encode Move and Add Move to queue
-        self.sequence += encode_position(x,y)
+        # Encode move
+        pos = encode_position(x, y)
+
+        # if value in Trie, advance
+        child = self.current_node.get_child(pos)
+        if child is not None:
+            self.current_node = child
+
+        # Add Move to queue
+        self.sequence += pos
 
         # Update cats count if a cat was placed
         if piece_type == PieceType.CAT:
@@ -316,7 +328,7 @@ class BoopGame:
         return True
 
     # Make AI move
-    def make_ai_move(self):
+    def make_ai_move(self, trie):
         current_player_idx = self.whoseturn
         # Ensure it's AI's turn
         if (current_player_idx == 0 and self.player0 == PlayerType.HUMAN) or \
@@ -325,11 +337,13 @@ class BoopGame:
             return
 
         #print(f"AI {('Orange' if current_player_idx == 0 else 'Black')} is thinking...")
-        best_move = self.ai.get_best_move(self.board, self.orange_cats, self.black_cats, current_player_idx)
+        best_move = self.ai.get_best_move(trie, self.board, self.current_node, self.orange_cats, self.black_cats, current_player_idx)
+            
 
         if best_move:
             x, y, piece_type = best_move
+
             #print(f"AI chooses to place {piece_type.name} at ({x},{y})")
-            self.process_move(x, y, piece_type)
+            self.process_move(x, y, piece_type, self.current_node)
         else:
             print("AI found no moves, this should not happen unless board is full or game ended.")

@@ -47,57 +47,62 @@ def import_sequences(game_trie): #imports data from txt file and returns a list 
 
 class TrieNode:
     def __init__(self):
-        """
-        Initializes a TrieNode.
-        children: A dictionary to store child nodes, where keys are characters and values are TrieNode objects.
-        if the node has no children it is a 'three in a row'.
-        """
         self.children = {}
+        self.value = 0
+        self.frequency = 0
+        self.is_terminal = False
+
+    def contains_move(self, move):
+        return move in self.children
+
+    def get_child(self, move):
+        return self.children.get(move)
+
 
 class Trie:
     def __init__(self):
         """
         Initializes the Trie with a root node.
         """
-        self.value = 0
-        self.frequency = 0
         self.root = TrieNode()
 
     def insert_sequence(self, sequence: str) -> None:
         """
-        Inserts a sequences into the Trie.
+        Inserts a sequence into the Trie.
         """
         current_node = self.root
         length = len(sequence)
-        winner = length % 2 # odd length strings mean orange won, even mean black won
+        winner = length % 2  # odd = orange, even = black
 
         for move in sequence:
             if move not in current_node.children:
                 current_node.children[move] = TrieNode()
             current_node = current_node.children[move]
-            self.frequency += 1
 
-            # considers the length and winner as weight
-            if winner:
-                self.value += (1 * length)
-            else:
-                self.value += (-1 * length)
+        # terminal node for this sequence
+        current_node.is_terminal = True
+        current_node.frequency += 1
 
+        if winner:
+            current_node.value += length
+        else:
+            current_node.value -= length
+
+    def contains_move(self, move: str) -> bool:
+        # convenience: does any sequence start with this move?
+        return self.root.contains_move(move)
 
     def search(self, sequence: str) -> bool:
         """
-        Searches for a word in the Trie.
-        Returns True if the word is found, False otherwise.
+        Returns True if the full sequence is stored in the trie.
         """
         current_node = self.root
         for move in sequence:
-            if sequence not in current_node.children:
+            if move not in current_node.children:
                 return False
             current_node = current_node.children[move]
-        if not current_node.children:
-            return True
-        else:
-            return False
+        return current_node.is_terminal
+
 
 
 

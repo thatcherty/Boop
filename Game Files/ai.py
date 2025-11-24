@@ -5,6 +5,7 @@ import random
 import copy
 from pieces import Piece, PieceType, PieceColor, GameState
 from constants import BOARD_SIZE # We will need BOARD_SIZE from constants
+from data_processing import encode_position, decode_position
 
 class BoopAI:
     def __init__(self, game_instance, depth):
@@ -84,6 +85,7 @@ class BoopAI:
         if maximizing_player: # Orange (Player 0) is maximizing
             max_eval = float('-inf')
             for move in moves:
+
                 x, y, piece_type = move
 
                 # Make the move on a copy
@@ -152,7 +154,7 @@ class BoopAI:
             return min_eval
 
     # Get the best move for AI
-    def get_best_move(self, board, orange_cats, black_cats, current_player_idx):
+    def get_best_move(self, trie, board, current_node, orange_cats, black_cats, current_player_idx):
         best_move = None
         
         moves = self.get_possible_moves(current_player_idx, board, orange_cats, black_cats)
@@ -168,6 +170,35 @@ class BoopAI:
         else:
             best_score = float('inf')
 
+
+        # determine if any available moves exist in Trie
+        if trie:
+            for move in moves:
+                x, y, piece_type = move
+
+                relative_weight = ((piece_type == PieceType.CAT) + 1) * 2
+                pos = encode_position(x, y)
+
+                child = current_node.get_child(pos)
+                if child is None:
+                    continue 
+
+                if maximizing_player:
+                    score = child.value + relative_weight
+                    if score > best_score:
+                        best_move = move
+                        best_score = score
+                else:
+                    score = child.value - relative_weight
+                    if score < best_score:
+                        best_move = move
+                        best_score = score
+            if (best_move):
+                # after the loop
+                return best_move
+
+            
+        # if no move was found in the game trie, use alpha beta pruning
         for move in moves:
             x, y, piece_type = move
 
