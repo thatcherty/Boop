@@ -20,19 +20,27 @@ def append_output_file(outputString): #outputString represents an encoded sequen
     print()
     print(f"--- Saving data to {FILENAME} ---")
     try:
-        # 'w' mode means 'write' - it will overwrite the file if it exists.
+        # 'a' mode means 'append' - it will add to the existing file.
         with open(FILENAME, 'a', newline='') as txtfile:
             txtfile.write(outputString + '\n')
-            #csv_writer = csv.writer(csvfile)
-
-            # Write the row to the CSV file
-            #csv_writer.writerow(outputString)
-
             print("Data saved successfully.")
     except IOError as e:
         print(f"Error saving file: {e}")
 
-def import_sequences(game_trie): #imports data from txt file and returns a list of sequences.
+def import_sequences_to_list():
+    sequences = []
+    try:
+        with open(FILENAME, 'r') as file:
+            for line in file:
+                # insert the sequence into the trie
+                sequences.append(line.strip())
+    except FileNotFoundError:
+        print(f"Error: The file '{FILENAME}' was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    return sequences
+
+def import_sequences_to_trie(game_trie): #imports data from txt file and returns a list of sequences.
     try:
         with open(FILENAME, 'r') as file:
             for line in file:
@@ -49,8 +57,6 @@ class TrieNode:
     def __init__(self):
         self.children = {}
         self.value = 0
-        self.frequency = 0
-        self.is_terminal = False
 
     def contains_move(self, move):
         return move in self.children
@@ -71,22 +77,11 @@ class Trie:
         Inserts a sequence into the Trie.
         """
         current_node = self.root
-        length = len(sequence)
-        winner = length % 2  # odd = orange, even = black
 
         for move in sequence:
             if move not in current_node.children:
                 current_node.children[move] = TrieNode()
             current_node = current_node.children[move]
-
-        # terminal node for this sequence
-        current_node.is_terminal = True
-        current_node.frequency += 1
-
-        if winner:
-            current_node.value += length
-        else:
-            current_node.value -= length
 
     def contains_move(self, move: str) -> bool:
         # convenience: does any sequence start with this move?
@@ -100,6 +95,7 @@ class Trie:
         for move in sequence:
             if move not in current_node.children:
                 return False
+            print(move , ", ")
             current_node = current_node.children[move]
         return current_node.is_terminal
 
@@ -108,15 +104,14 @@ class Trie:
 
 
 if __name__ == "__main__":
-    sampleTrie = Trie()
-    Sequences = import_sequences()
-    print(Sequences)
-
-    for sequence in Sequences:
-        sampleTrie.insert_sequence(sequence)
+    game_trie = Trie()
+    import_sequences_to_trie(game_trie)
+    game_sequences = import_sequences_to_list()
     
-    print(f"looking for: ", Sequences[3])
-    print(f"checking to see if sequence is contained: ", sampleTrie.search(Sequences[3]))
 
-    print(f"print first layer of trie: ", sampleTrie.root.children['I'])
+
+    print(f"looking for: ", game_sequences[3])
+    print(f"checking to see if sequence is contained: ", game_trie.search(game_sequences[3]))
+
+    print(f"print first layer of trie: ", game_trie.root.children)
         
