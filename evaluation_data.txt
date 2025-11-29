@@ -1,0 +1,3 @@
+with 110 sequences:
+sequences.txt = 2.96KB
+sampling_trie.pkl = 80.0KB
