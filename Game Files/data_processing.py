@@ -5,7 +5,7 @@ import os
 # Define the name of our JSON file
 FILENAME = 'sequences.txt'
 
-def encode_position(x,y): #take in integetr postions and output a single character
+def encode_position(x,y):               #take in x,y position and output a single character
     return chr(6*x + y + 65)
 
 def decode_position(char):
@@ -15,22 +15,18 @@ def decode_position(char):
 
 
 def append_output_file(outputString): #outputString represents an encoded sequence of moves
-     
-    """Saves a encoded sequence as a string into a new line of the csv file"""
+    
     print()
     print(f"--- Saving data to {FILENAME} ---")
     try:
-        # 'w' mode means 'write' - it will overwrite the file if it exists.
+        # append to file
         with open(FILENAME, 'a', newline='') as txtfile:
             txtfile.write(outputString + '\n')
-            #csv_writer = csv.writer(csvfile)
-
-            # Write the row to the CSV file
-            #csv_writer.writerow(outputString)
 
             print("Data saved successfully.")
     except IOError as e:
         print(f"Error saving file: {e}")
+
 
 def import_sequences(game_trie): #imports data from txt file and returns a list of sequences.
     try:
@@ -79,14 +75,19 @@ class Trie:
                 current_node.children[move] = TrieNode()
             current_node = current_node.children[move]
 
+            # longer sequences should have less appealing value
+            # need to consider a different formula
+            if winner:
+                current_node.value += ((1 / length) * 10)
+            else:
+                current_node.value -= ((1 / length) * 10)
+            
+            
+            # sequences that are more frequently used should have a higher value
+            current_node.frequency += 1
+
         # terminal node for this sequence
         current_node.is_terminal = True
-        current_node.frequency += 1
-
-        if winner:
-            current_node.value += length
-        else:
-            current_node.value -= length
 
     def contains_move(self, move: str) -> bool:
         # convenience: does any sequence start with this move?

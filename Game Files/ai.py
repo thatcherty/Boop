@@ -171,11 +171,14 @@ class BoopAI:
             best_score = float('inf')
 
 
-        # determine if any available moves exist in Trie
+        # if playing with the trie/not sampling
         if trie:
+            
+            # determine if any available moves exist in Trie
             for move in moves:
                 x, y, piece_type = move
 
+                # give more value to Cat moves
                 relative_weight = ((piece_type == PieceType.CAT) + 1) * 2
                 pos = encode_position(x, y)
 
@@ -193,6 +196,7 @@ class BoopAI:
                     if score < best_score:
                         best_move = move
                         best_score = score
+
             if (best_move):
                 # after the loop
                 return best_move

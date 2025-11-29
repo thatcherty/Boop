@@ -39,32 +39,25 @@ def run_game():
             if game.win_msg == "":
                 current_player_type = game.player0 if game.whoseturn == 0 else game.player1
                 if current_player_type == PlayerType.AI:
-                    ##gui.update_ai_thinking_status(True) # Show AI thinking on GUI
-                    ##gui.draw() # Update display with "AI thinking" message
-                    ##pygame.time.wait(200) # Small delay for visual effect
-                    game.make_ai_move(0)
-                    ##gui.update_ai_thinking_status(False) # AI finished thinking
+                    #gui.update_ai_thinking_status(True) # Show AI thinking on GUI
+                    #gui.draw() # Update display with "AI thinking" message
+                    #pygame.time.wait(200) # Small delay for visual effect
+                    # trie = 0 if sampling and 1 if not sampling
+                    game.make_ai_move(trie=0)
+                    #gui.update_ai_thinking_status(False) # AI finished thinking
                     # Re-draw the board immediately after AI move
-                    ##gui.draw()
+                    #gui.draw()
                     #if game.win_msg != "":
-                    #    pygame.time.wait(2000) # Small delay after AI move for player to see
-            
-            ##gui.draw() # Always draw the current game state
-            ##gui.clock.tick(60)  # 60 FPS
+                        #pygame.time.wait(2000) # Small delay after AI move for player to see
 
-        
-        #game_trie.add_seq(game.sequence)
+            #gui.draw() # Always draw the current game state
+            #gui.clock.tick(60)  # 60 FPS
+        print(game.win_msg)
+
+
         rounds += 1
-        
-        print(game.sequence)
-        print(f"number of moves until trio: ", len(game.sequence))
 
-        #Store the sequence in a txt file
-        append_output_file(game.sequence)
-
-    print("-" * 20)
-
-            
+    print("-" * 20)     
 
 if __name__ == "__main__":
     run_game()

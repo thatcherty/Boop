@@ -5,7 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
-from data_processing import encode_position, decode_position, Trie, import_sequences
+from data_processing import encode_position, Trie, import_sequences, append_output_file
 
 # Main game class
 class BoopGame:
@@ -24,6 +24,8 @@ class BoopGame:
         self.sequence = ""
         self.game_trie = Trie()
         self.current_node = self.game_trie.root
+        self.follow_trie = False
+        self.sequence_found = False
 
         import_sequences(self.game_trie)
 
@@ -258,7 +260,7 @@ class BoopGame:
 
     # Process a player's move (human or AI)
     # Returns True if a move was successfully processed and the turn ended, False otherwise
-    def process_move(self, x, y, piece_type, current_node):
+    def process_move(self, x, y, piece_type, sampling):
         current_player_idx = self.whoseturn
         player_color = PieceColor.ORANGE if current_player_idx == 0 else PieceColor.BLACK
 
@@ -276,6 +278,10 @@ class BoopGame:
         child = self.current_node.get_child(pos)
         if child is not None:
             self.current_node = child
+            self.follow_trie = True
+        else:
+            self.current_node = self.game_trie.root
+            self.follow_trie = False
 
         # Add Move to queue
         self.sequence += pos
@@ -305,14 +311,29 @@ class BoopGame:
         # Check for three in a row
         three_result = self.first_three_in_row(current_player_idx)
         if three_result['found']:
-            #for px,py in three_result['positions']:
-            #    self.board[py][px] = None
-            if current_player_idx == 0:
-                self.orange_cats += 3
-                self.win_msg = "Orange trio!"
+            
+            # playing until 3 in a row
+            if (sampling):
+                print(self.sequence)
+                print(f"number of moves until trio: ", len(self.sequence))
+                append_output_file(self.sequence)
+
+                if current_player_idx == 0:
+                    self.orange_cats += 3
+                    self.win_msg = "Orange trio!"
+                else:
+                    self.black_cats += 3
+                    self.win_msg = "Black trio!"
+            # playing game until win
             else:
-                self.black_cats += 3
-                self.win_msg = "Black trio!"
+                self.current_node = self.game_trie.root
+                for px,py in three_result['positions']:
+                    self.board[py][px] = None
+                if current_player_idx == 0:
+                    self.orange_cats += 3
+                else:
+                    self.black_cats += 3
+
 
         # Check for win
         if self.player_won(current_player_idx):
@@ -344,6 +365,6 @@ class BoopGame:
             x, y, piece_type = best_move
 
             #print(f"AI chooses to place {piece_type.name} at ({x},{y})")
-            self.process_move(x, y, piece_type, self.current_node)
+            self.process_move(x, y, piece_type, not trie)
         else:
             print("AI found no moves, this should not happen unless board is full or game ended.")
