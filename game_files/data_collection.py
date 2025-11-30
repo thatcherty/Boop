@@ -17,6 +17,8 @@ def collect_sequences(rounds_played, ai_depth_setting):
                 game.make_ai_move()
                 if len(game.sequence) > max_sequence_length :
                     game.win_msg == "Too long! Rejected data!"
-                    game.sequence = []
+                    game.sequence = ""
+                    break
         round_counter += 1
-        append_output_file(game.sequence) #Store the sequence in a txt file
+        if game.sequence:
+            append_output_file(game.sequence) #Store the sequence in a txt file

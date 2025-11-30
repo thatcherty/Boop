@@ -1,6 +1,7 @@
 import pickle
 import os
 import random
+from collections import deque
 
 # Define the names of our files
 SEQUENCES_FILENAME = 'sequences.txt'
@@ -12,13 +13,19 @@ class TrieNode:
         self.heuristic_value = value
 
     def print_children(self):
-            print(f"print values of children of pickled trie root: ")
             if not self.children:
                 print("No children, this is a leaf node")
+                return
+            print(len(self.children), "Current Moves")
             for move, node in self.children.items():
-                print(f"move: ", move, ":", decode_position(move), 
-                    "value: ", node.heuristic_value
+                print(
+                    "Move: ", move, ":", decode_position(move), 
+                    "Value: ", node.heuristic_value
                 )
+                orange_wins, total_wins = traversal_data(node)
+                print ("Orange Wins:", orange_wins)
+                print("Black Wins:", total_wins - orange_wins)
+                print("Total Games:", total_wins)
 
 class Trie:
     def __init__(self):
@@ -73,28 +80,39 @@ class Trie:
         print("trie pickled to: ", TRIE_FILENAME, "\n" )
 
     def print_sequence_analysis(self, sequence = ""): # traverses a sequence to see the data related to a specific or random path
+        depth = 0
         if sequence: # if a sequence is specified
             print("\n", "Traversing a path for sequence:", sequence)
             current_node = self.root
             for move in sequence:
+                print("Node Depth: ", depth, end="   ")
+                current_node.print_children()
                 print(
-                    "Number of possible moves in trie:", len(current_node.children),
                     "Move:", move, ":", decode_position(move), 
-                    "Value for next move:", current_node.children[move].heuristic_value                    
+                    "Value for chosen move:", current_node.children[move].heuristic_value
+                )
+                print()
+                print(
+                    "Node Depth: ", depth,
+                    "Number of possible moves currently in trie:", len(current_node.children)
                 )
                 current_node = current_node.children[move]
+                depth += 1
         else:
-            print("\n", "Traversing a random path:")
+            print("\n", "Traversing a random path:", "\n")
             current_node = self.root
             while current_node.children:
                 random_child = random.choice(list(current_node.children.items()))
                 child_next_move, child_next_node = random_child
+                print("Node Depth: ", depth, end="   ")
+                current_node.print_children()
                 print(
-                    "Number of possible moves in trie:", len(current_node.children),
-                    "Move:", child_next_move, ":", decode_position(child_next_move), 
-                    "Value for next move:", child_next_node.heuristic_value,
+                    "Chosen Move:", child_next_move, ":", decode_position(child_next_move), 
+                    "Value of chosen move:", child_next_node.heuristic_value,
                 )
+                print()
                 current_node = child_next_node
+                depth += 1
 
 def prepare_trie(load_from_sequences_file = True): #load_from_sequences toggles whether to update the trie from sequences.txt
     if TRIE_FILENAME in os.listdir("./"):
@@ -114,6 +132,33 @@ def prepare_trie(load_from_sequences_file = True): #load_from_sequences toggles 
             print("Sequence data not found. Returning empty Trie object")
     return game_trie
 
+def traversal_data(node: TrieNode) -> tuple: # returns number of orange wins and total paths contained in branch
+    nodeQueue = deque()
+    nodeQueue.append(node)
+    total_paths = 0
+    orange_wins = 0
+    current_layer = 0 #root is 0th layer so odd layer leaf nodes are orange wins
+    layer_counter = 0
+
+    while nodeQueue:
+        layer_counter = len(nodeQueue)
+
+        while layer_counter > 0:
+            current_node: TrieNode = nodeQueue.popleft()
+            if not current_node.children: #a leaf node
+                total_paths += 1
+                if current_layer % 2 == 1:
+                    orange_wins += 1
+            else:
+                for child in current_node.children.values():
+                    nodeQueue.append(child)
+            layer_counter -= 1
+
+        current_layer += 1
+
+    return (orange_wins, total_paths)
+
+
 def encode_position(x,y): #take in integer postions and output a single character
     return chr(6*x + y + 65)
 
@@ -122,11 +167,12 @@ def decode_position(char): #translates from char to (x,y) coordinate
     y = (ord(char)-65) % 6
     return (x,y)
 
-def append_output_file(outputString): #outputString represents an encoded sequence of moves
+def append_output_file(outputString: str): #outputString represents an encoded sequence of moves
     try:
         # 'a' mode means 'append' - it will add to the existing file.
         with open(SEQUENCES_FILENAME, 'a', newline='') as txtfile:
-            txtfile.write(outputString + '\n')
+            print(outputString)
+            txtfile.write(outputString + "\n")
             #print("Data saved successfully.")
     except IOError as e:
         print(f"Error saving file: {e}")
