@@ -1,3 +1,19 @@
 with 110 sequences:
-sequences.txt = 2.96KB
-sampling_trie.pkl = 80.0KB
+sequences.txt = 2.96 KB
+sampling_trie.pkl = 80.0 KB
+
+306 sequences
+sequences.txt = 8.37 KB
+sampling_trie.pkl = 216 KB
+
+870 sequences
+sequences.txt = 19.6 KB
+sampling_trie.pkl = 480 KB
+
+1777 sequences
+sequences.txt = 44.1 KB
+sampling_trie.pkl = 1060 KB
+
+33152 sequences
+sequences.txt = 904 KB
+sampling_trie.pkl = 21481 KB

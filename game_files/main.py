@@ -14,11 +14,11 @@ if __name__ == "__main__":
     #run_game()
     heuristic_trie: Trie = prepare_trie(True)
 
-    for i in range(100):
+    """ for i in range(100):
         collect_sequences(1000, 2)
-        heuristic_trie = prepare_trie(True) 
+        heuristic_trie = prepare_trie(True) """ 
 
-    #heuristic_trie.root.print_children()
+    heuristic_trie.root.print_children()
 
     #heuristic_trie.print_sequence_analysis()
 
