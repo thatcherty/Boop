@@ -48,11 +48,15 @@ def run_game():
 
 if __name__ == "__main__":
     #run_game()
-    for i in range(1):
-        collect_sequences(5, 3)
-        heuristic_trie = prepare_trie()
+    print("Hello!")
+    heuristic_trie = prepare_trie(False)
 
-    print(f"print values of children of pickled trie root: ")
-    for move, node in heuristic_trie.root.children.items():
-        print(f"move: ", decode_position(move), "value: ", node.heuristic_value)
+    for i in range(5):
+        collect_sequences(100, 2)
+        heuristic_trie = prepare_trie(True)
+
+    #heuristic_trie.root.print_children()
+
+    #heuristic_trie.print_sequence_analysis()
+
 
