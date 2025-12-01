@@ -179,7 +179,7 @@ class BoopAI:
                     print("Defaulting to existing heuristic")
                     print("--" * 10)
             if trie_nodes: # if trie_nodes is empty then default to existing heuristic function 
-                best_board_move = ()
+                best_board_move = None
                 high_score = float('-inf')
                 for move, node in trie_nodes.items():
                     
