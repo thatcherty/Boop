@@ -6,12 +6,12 @@ The original code for this gameplay was written by Dr. Kenrick Mock of UAA and p
 The main branch of this repository is the code written by Dr. Mock, and branches from it are the work of Thatcher King and Spencer Douthit
 
 Using the existing structure of the game, we created scripts for: 
--Data collection using Monte Carlo sampling
--Encoding and decoding of move positions for efficient storage
--Construction of a Trie class to store our sampling data
--Creation of a function to quantify the quality of a move based on the outcomes and their distance from the current state
--Many helper functions to help describe the data stored in the Trie
--Functionality for the orange AI agent to use an alternate, Trie value for decision making instead of the default heuristic function from the board state
+ - Data collection using Monte Carlo sampling
+ - Encoding and decoding of move positions for efficient storage
+ - Construction of a Trie class to store our sampling data
+ - Creation of a function to quantify the quality of a move based on the outcomes and their distance from the current state
+ - Many helper functions to help describe the data stored in the Trie
+ - Functionality for the orange AI agent to use an alternate, Trie value for decision making instead of the default heuristic function from the board state
 
 ## Our work
 Our project is improving an AI agent’s playing ability of the game “Boop.” Boop is a board game that is available in a phyical form for but also exists digitally, written in python using pygame. The game has an AI agent player that utilizes minimax to create a search tree of moves. The board is 6x6, and building a search tree of all the possible moves gets computationally large and slow beyond a depth of 3 moves. 
