@@ -46,6 +46,7 @@ def run_game():
         gui.draw() # Always draw the current game state
         gui.clock.tick(60)  # 60 FPS
         if game.win_msg:
+            pygame.time.wait(2000) # Small delay after AI move for player to see
             break
     game.ai.heuristic_trie.print_sequence_analysis(game.sequence)
         
@@ -53,7 +54,6 @@ def run_game():
     
 
 if __name__ == "__main__":
-
     run_game()
 
 

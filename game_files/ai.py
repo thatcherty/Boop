@@ -12,6 +12,7 @@ class BoopAI:
         self.game = game_instance # Reference to the main game object for rule checks
         self.depth = depth
         self.heuristic_trie = prepare_trie(True) # loads sequence data into trie for use
+        self.current_node = self.heuristic_trie.root
 
     # Get all possible moves for the current player
     def get_possible_moves(self, player_idx, board, orange_cats, black_cats):
@@ -165,8 +166,18 @@ class BoopAI:
         We are having the orange player use the trie and leaving the existing method for the black player
         """
         if current_player_idx == 0: # Orange is making a move, try to use the trie heuristic
-            print("Sequence at current game state:", sequence)
-            trie_nodes = self.heuristic_trie.get_children(sequence)
+            current_node = self.heuristic_trie.root
+            trie_nodes = current_node.children
+            for move in sequence:
+                if move in current_node.children:
+                    current_node = current_node.children[move]
+                    trie_nodes = current_node.children
+                else:
+                    trie_nodes = {}
+                    print("--" * 10)
+                    print("Game sequence is no longer contained in collected game trie")
+                    print("Defaulting to existing heuristic")
+                    print("--" * 10)
             if trie_nodes: # if trie_nodes is empty then default to existing heuristic function 
                 best_board_move = ()
                 high_score = float('-inf')
@@ -177,11 +188,7 @@ class BoopAI:
                 print("\n", "Trie Heuristic score:", high_score)
                 best_trie_move = best_board_move + (PieceType.KITTEN,) # building a tuple in rerquired format
                 return best_trie_move
-            else:
-                print("--" * 10)
-                print("Game sequence is no longer contained in collected game trie")
-                print("Defaulting to existing heuristic")
-                print("--" * 10)
+                
 
         # Shuffle moves to add variety, especially helpful if multiple moves have the same score
         random.shuffle(moves)

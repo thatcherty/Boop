@@ -54,7 +54,7 @@ class Trie:
             
             # creates value between 0 and 1 to add to the heuristic value
             # large enough sampling should eventually collect good moves
-            value = 1/(index - sequence_length) 
+            value = 1/(sequence_length - index) 
             if winner == 0:
                 value *= -1 #give negative value to indicate good black player outcome
 
@@ -86,7 +86,7 @@ class Trie:
             current_node = self.root
             for move in sequence:
                 if move not in current_node.children:
-                    print("Off the map!!")
+                    print("move", move, "Off the map!!")
                     return
                 else: 
                     print("Node Depth: ", depth, end="   ")
