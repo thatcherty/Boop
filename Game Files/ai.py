@@ -187,7 +187,7 @@ class BoopAI:
                     continue 
 
                 if maximizing_player:
-                    score = child.value + relative_weight
+                    score = child.heuristic_value + relative_weight
                     if score > best_score:
                         best_move = move
                         best_score = score

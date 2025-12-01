@@ -5,7 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
-from data_processing import encode_position, Trie, import_sequences, append_output_file
+from data_processing import encode_position, Trie, prepare_trie, append_output_file
 
 # Main game class
 class BoopGame:
@@ -22,12 +22,12 @@ class BoopGame:
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.sequence = ""
-        self.game_trie = Trie()
+        self.game_trie = prepare_trie()
         self.current_node = self.game_trie.root
         self.follow_trie = False
         self.sequence_found = False
 
-        import_sequences(self.game_trie)
+        
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -273,6 +273,8 @@ class BoopGame:
 
         # Encode move
         pos = encode_position(x, y)
+        
+        print(pos)
 
         # if value in Trie, advance
         child = self.current_node.get_child(pos)
@@ -321,9 +323,11 @@ class BoopGame:
                 if current_player_idx == 0:
                     self.orange_cats += 3
                     self.win_msg = "Orange trio!"
+                    print("Orange trio!")
                 else:
                     self.black_cats += 3
                     self.win_msg = "Black trio!"
+                    print("Black trio!")
             # playing game until win
             else:
                 self.current_node = self.game_trie.root
@@ -331,8 +335,10 @@ class BoopGame:
                     self.board[py][px] = None
                 if current_player_idx == 0:
                     self.orange_cats += 3
+                    print("Orange trio!")
                 else:
                     self.black_cats += 3
+                    print("Black trio!")
 
 
         # Check for win

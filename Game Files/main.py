@@ -7,9 +7,6 @@ import sys
 from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
-# from trie import trie
-from data_processing import append_output_file
-from data_processing import import_sequences
 from data_processing import Trie
 
 # Main game loop and program start
