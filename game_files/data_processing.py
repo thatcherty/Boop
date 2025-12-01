@@ -79,16 +79,36 @@ class Trie:
             pickle.dump(self, file)
         print("trie pickled to: ", TRIE_FILENAME, "\n" )
 
-    def print_sequence_analysis(self, sequence = "") -> None: # traverses a sequence to see the data related to a specific or random path
+    def print_sequence_analysis(self, stats, index, sequence = "") -> None: # traverses a sequence to see the data related to a specific or random path
         depth = 0
+
+        stats.append([0,0,0])
+
+        if (len(sequence) % 2):
+            # if orange got a 3 in a row
+            stats[index][0] = 1
+        else:
+            # if black got a 3 in a row
+            stats[index][0] = -1
+
         if sequence: # if a sequence is specified, otherwise traverse random sequence below
             print("\n", "Traversing a path for sequence:", sequence)
             current_node = self.root
             for move in sequence:
                 if move not in current_node.children:
+
+                    # sequence was not completely in the trie
+                    stats[index][1] = 0
+
                     print("move", move, "Off the map!!")
                     return
                 else: 
+                    # sequence is in the trie
+                    stats[index][1] = 1
+
+                    # increment the number of moves from the sequence that were in the trie
+                    stats[index][2] += 1
+
                     print("Node Depth: ", depth, end="   ")
                     current_node.print_children()
                     print(
@@ -223,3 +243,71 @@ def load_pickled_trie(trieFilename: str) -> Trie: # loads a pickle file into a T
             loaded_trie = pickle.load(file)
         print("Data loaded from ", trieFilename)
         return loaded_trie
+
+# print out stats of the games played
+def game_stats(stats):
+
+    orange_wins_in_trie = 0
+    orange_wins_not_in_trie = 0
+    black_wins_in_trie = 0
+    black_wins_not_in_trie = 0
+    games_in_trie = 0
+    games_not_in_trie = 0
+    total_games = len(stats)
+
+    for arr in stats:
+        # wins in the trie
+        if arr[1] == 1:
+            games_in_trie += 1
+            # black wins in the trie
+            if arr[0] == -1:
+                black_wins_in_trie += 1
+        
+            # orange wins in the trie
+            elif arr[0] == 1:
+                orange_wins_in_trie += 1
+        
+        # wins not in the trie
+        else:
+            games_not_in_trie += 1
+
+            # black wins not in the trie
+            if arr[0] == -1:
+                black_wins_not_in_trie += 1
+        
+            # orange wins not in the trie
+            elif arr[0] == 1:
+                orange_wins_not_in_trie += 1
+
+    print()
+    print(f"Orange wins in the trie: {orange_wins_in_trie}")
+    print(f"Black wins in the trie: {black_wins_in_trie}")
+    print(f"Orange wins not in the trie: {orange_wins_not_in_trie}")
+    print(f"Black wins not in the trie: {black_wins_not_in_trie}")
+    print(f"Games in the trie: {games_in_trie}")
+    print(f"Games not in the trie {games_not_in_trie}")
+
+    if games_in_trie:
+        print(f"Percent of games in the trie: {(games_in_trie / total_games) * 100}")
+        print(f"Percent of games won by orange in the trie: {(orange_wins_in_trie / games_in_trie) * 100}")
+        print(f"Percent of games won by black in the trie: {(black_wins_in_trie / games_in_trie) * 100}")
+
+    if games_not_in_trie:
+        print(f"Percent of games not in the trie: {(games_not_in_trie / total_games) * 100}")
+        print(f"Percent of games won by orange not in the trie: {(orange_wins_not_in_trie / games_not_in_trie) * 100}")
+        print(f"Percent of games won by black not in the trie: {(black_wins_not_in_trie / games_not_in_trie) * 100}")
+    
+
+
+
+if __name__ == '__main__':
+    test = Trie()
+
+    stats = []
+    played = 0
+
+    sequence = 'U\VU`BHRKNPG_`W'
+
+    test.print_sequence_analysis(stats, played, sequence)
+
+    game_stats(stats)
