@@ -172,7 +172,7 @@ class BoopAI:
 
 
         # if playing with the trie/not sampling
-        if trie:
+        if trie and maximizing_player:
             
             # determine if any available moves exist in Trie
             for move in moves:

@@ -43,7 +43,7 @@ def run_game():
                     #gui.draw() # Update display with "AI thinking" message
                     #pygame.time.wait(200) # Small delay for visual effect
                     # trie = 0 if sampling and 1 if not sampling
-                    game.make_ai_move(trie=0)
+                    game.make_ai_move(trie=1)
                     #gui.update_ai_thinking_status(False) # AI finished thinking
                     # Re-draw the board immediately after AI move
                     #gui.draw()
