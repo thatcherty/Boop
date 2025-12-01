@@ -5,7 +5,7 @@ import copy
 from pieces import Piece, PieceType, PieceColor, PlayerType
 from constants import BOARD_SIZE, KITTEN_MEOW_SOUND, CAT_MEOW_SOUND, BOOP_SOUND, CHEER_SOUND
 from ai import BoopAI
-from data_processing import encode_position, decode_position, Trie
+from data_processing import *
 
 # Main game class
 class BoopGame:
@@ -21,7 +21,7 @@ class BoopGame:
         self.black_last_selection = PieceType.KITTEN
         self.player0 = PlayerType.AI  # CHANGE FOR AI or HUMAN
         self.player1 = PlayerType.AI  # CHANGE FOR AI or HUMAN
-        self.sequence = ""
+        self.sequence = "" # used for data collection
 
         self.ai = BoopAI(self, ai_depth) # Pass self to AI for rule checks
 
@@ -32,7 +32,7 @@ class BoopGame:
         self.cheer = None
         if not pygame.mixer.get_init(): 
             pygame.mixer.init()
-        #self._load_sounds() # Load sounds directly here
+        self._load_sounds() # Load sounds directly here
 
     def _load_sounds(self):
         try:
@@ -62,7 +62,7 @@ class BoopGame:
         if 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE:
             board[y][x] = piece
             self.last_placed_pos = (x,y)
-            #print(f"{piece.color} {piece.type} placed at {x},{y}")
+            print(f"{piece.color} {piece.type} placed at {x},{y}")
             return True
         return False
 
@@ -75,7 +75,7 @@ class BoopGame:
         playSound = False
         if board is None:
             board = self.board
-        #    playSound = True
+            playSound = True
 
         moves_made = []
 
@@ -282,11 +282,11 @@ class BoopGame:
                 if self.black_cats == 0:
                     self.black_last_selection = PieceType.KITTEN
 
-        # # Play sound for placement
-        # if piece_type == PieceType.KITTEN and self.kitten_meow:
-        #     self.kitten_meow.play()
-        # elif piece_type == PieceType.CAT and self.cat_meow:
-        #     self.cat_meow.play()
+        # Play sound for placement
+        if piece_type == PieceType.KITTEN and self.kitten_meow:
+            self.kitten_meow.play()
+        elif piece_type == PieceType.CAT and self.cat_meow:
+            self.cat_meow.play()
 
         # Check for boop
         boop_results = self.check_boop(x, y)
@@ -328,7 +328,7 @@ class BoopGame:
             return
 
         #print(f"AI {('Orange' if current_player_idx == 0 else 'Black')} is thinking...")
-        best_move = self.ai.get_best_move(self.board, self.orange_cats, self.black_cats, current_player_idx)
+        best_move = self.ai.get_best_move(self.board, self.orange_cats, self.black_cats, current_player_idx, self.sequence)
             
 
         if best_move:

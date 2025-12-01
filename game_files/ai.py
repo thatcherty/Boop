@@ -5,12 +5,13 @@ import random
 import copy
 from pieces import Piece, PieceType, PieceColor, GameState
 from constants import BOARD_SIZE # We will need BOARD_SIZE from constants
-from data_processing import encode_position, decode_position
+from data_processing import *
 
 class BoopAI:
     def __init__(self, game_instance, depth):
         self.game = game_instance # Reference to the main game object for rule checks
         self.depth = depth
+        self.heuristic_trie = prepare_trie(True) # loads sequence data into trie for use
 
     # Get all possible moves for the current player
     def get_possible_moves(self, player_idx, board, orange_cats, black_cats):
@@ -154,10 +155,33 @@ class BoopAI:
             return min_eval
 
     # Get the best move for AI
-    def get_best_move(self, board, orange_cats, black_cats, current_player_idx):
+    def get_best_move(self, board, orange_cats, black_cats, current_player_idx, sequence: str):
         best_move = None
-        
+
         moves = self.get_possible_moves(current_player_idx, board, orange_cats, black_cats)
+
+        """
+        This is the section that defines the agents use of the trie instead of a function to find a heuristic value for possible moves
+        We are having the orange player use the trie and leaving the existing method for the black player
+        """
+        if current_player_idx == 0: # Orange is making a move, try to use the trie heuristic
+            print("Sequence at current game state:", sequence)
+            trie_nodes = self.heuristic_trie.get_children(sequence)
+            if trie_nodes: # if trie_nodes is empty then default to existing heuristic function 
+                best_board_move = ()
+                high_score = float('-inf')
+                for move, node in trie_nodes.items():
+                    if node.heuristic_value > high_score:
+                        high_score = node.heuristic_value
+                        best_board_move = decode_position(move)
+                print("\n", "Trie Heuristic score:", high_score)
+                best_trie_move = best_board_move + (PieceType.KITTEN,) # building a tuple in rerquired format
+                return best_trie_move
+            else:
+                print("--" * 10)
+                print("Game sequence is no longer contained in collected game trie")
+                print("Defaulting to existing heuristic")
+                print("--" * 10)
 
         # Shuffle moves to add variety, especially helpful if multiple moves have the same score
         random.shuffle(moves)
@@ -169,8 +193,7 @@ class BoopAI:
             best_score = float('-inf')
         else:
             best_score = float('inf')
-            
-        # if no move was found in the game trie, use alpha beta pruning
+
         for move in moves:
             x, y, piece_type = move
 
@@ -218,6 +241,6 @@ class BoopAI:
                 if score < best_score:
                     best_score = score
                     best_move = move
-        #print(score)
-
+        
+        print("\n", "default heuristic function score:", best_score)
         return best_move

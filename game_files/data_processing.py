@@ -22,10 +22,10 @@ class TrieNode:
                     "Move: ", move, ":", decode_position(move), 
                     "Value: ", node.heuristic_value
                 )
-                orange_wins, total_wins = traversal_data(node)
-                print ("Orange Wins:", orange_wins)
-                print("Black Wins:", total_wins - orange_wins)
-                print("Total Games:", total_wins)
+
+    def print_outcome_data(self):
+        orange_wins, total_wins = traversal_data(self)
+        print ("Orange Wins:", orange_wins, "Black Wins:", total_wins - orange_wins)
 
 class Trie:
     def __init__(self):
@@ -79,25 +79,25 @@ class Trie:
             pickle.dump(self, file)
         print("trie pickled to: ", TRIE_FILENAME, "\n" )
 
-    def print_sequence_analysis(self, sequence = ""): # traverses a sequence to see the data related to a specific or random path
+    def print_sequence_analysis(self, sequence = "") -> None: # traverses a sequence to see the data related to a specific or random path
         depth = 0
-        if sequence: # if a sequence is specified
+        if sequence: # if a sequence is specified, otherwise traverse random sequence below
             print("\n", "Traversing a path for sequence:", sequence)
             current_node = self.root
             for move in sequence:
-                print("Node Depth: ", depth, end="   ")
-                current_node.print_children()
-                print(
-                    "Move:", move, ":", decode_position(move), 
-                    "Value for chosen move:", current_node.children[move].heuristic_value
-                )
-                print()
-                print(
-                    "Node Depth: ", depth,
-                    "Number of possible moves currently in trie:", len(current_node.children)
-                )
-                current_node = current_node.children[move]
-                depth += 1
+                if move not in current_node.children:
+                    print("Off the map!!")
+                    return
+                else: 
+                    print("Node Depth: ", depth, end="   ")
+                    current_node.print_children()
+                    print(
+                        "Move:", move, ":", decode_position(move), 
+                        "Value for chosen move:", current_node.children[move].heuristic_value
+                    )
+                    print()
+                    current_node = current_node.children[move]
+                    depth += 1
         else:
             print("\n", "Traversing a random path:", "\n")
             current_node = self.root
@@ -113,6 +113,18 @@ class Trie:
                 print()
                 current_node = child_next_node
                 depth += 1
+
+    def get_children(self, sequence: str) -> dict: # takes a sequence and returns a dict of available nodes from that position
+        currentNode = self.root
+        print("sequence:", sequence)
+        for move in sequence:
+            print("move to check:", move)
+            if move in currentNode.children:
+                currentNode = currentNode.children[move]
+            else: # If this sequence is not contained in the trie then return an empty dict
+                return {}
+        
+        return currentNode.children
 
 def prepare_trie(load_from_sequences_file = True): #load_from_sequences toggles whether to update the trie from sequences.txt
     if TRIE_FILENAME in os.listdir("./"):

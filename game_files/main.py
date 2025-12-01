@@ -8,20 +8,7 @@ from game import BoopGame
 from gui import GameGUI
 from pieces import PlayerType # Import PlayerType from pieces
 from data_collection import collect_sequences
-from data_processing import Trie, TrieNode, prepare_trie, decode_position, traversal_data
-
-if __name__ == "__main__":
-    #run_game()
-    heuristic_trie: Trie = prepare_trie(True)
-
-    """ for i in range(100):
-        collect_sequences(1000, 2)
-        heuristic_trie = prepare_trie(True) """ 
-
-    heuristic_trie.root.print_children()
-
-    #heuristic_trie.print_sequence_analysis()
-
+from data_processing import *
 
 # Main game loop and program start
 def run_game():
@@ -58,7 +45,15 @@ def run_game():
         
         gui.draw() # Always draw the current game state
         gui.clock.tick(60)  # 60 FPS
+        if game.win_msg:
+            break
+    game.ai.heuristic_trie.print_sequence_analysis(game.sequence)
+        
 
+    
 
+if __name__ == "__main__":
+
+    run_game()
 
 
