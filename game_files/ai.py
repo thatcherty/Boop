@@ -184,19 +184,20 @@ class BoopAI:
                 for move, node in trie_nodes.items():
                     
                     # check that the move is available
-                    poss_move = decode_position(move) + (PieceType.KITTEN,)
+                    x,y = decode_position(move) 
+                    poss_move = (x, y, PieceType.KITTEN)
 
                     if poss_move not in moves:
                         continue     
 
                     if node.heuristic_value > high_score:
                         high_score = node.heuristic_value
-                        best_board_move = decode_position(move)
+                        best_board_move = (x,y)
                 print("\n", "Trie Heuristic score:", high_score)
-                best_trie_move = best_board_move + (PieceType.KITTEN,) # building a tuple in required format
-
+                
                 # in case none of the moves were available
-                if best_trie_move:
+                if best_board_move is not None:
+                    best_trie_move = best_board_move + (PieceType.KITTEN,) # building a tuple in required format
                     return best_trie_move
                 
 
