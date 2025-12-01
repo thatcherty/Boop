@@ -25,7 +25,7 @@ def run_game():
     # change this number to modify how many
     # games to play through
     #--------------------------------------
-    count = 100
+    count = 10
 
 
     # track how many games have been played
