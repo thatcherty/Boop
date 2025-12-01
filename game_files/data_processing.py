@@ -254,9 +254,11 @@ def game_stats(stats):
     games_in_trie = 0
     games_not_in_trie = 0
     total_games = len(stats)
+    average_time_in_trie = 0
 
     for arr in stats:
         # wins in the trie
+        average_time_in_trie += arr[2]
         if arr[1] == 1:
             games_in_trie += 1
             # black wins in the trie
@@ -286,6 +288,7 @@ def game_stats(stats):
     print(f"Black wins not in the trie: {black_wins_not_in_trie}")
     print(f"Games in the trie: {games_in_trie}")
     print(f"Games not in the trie {games_not_in_trie}")
+    print(f"Average moves taken in the trie: {average_time_in_trie / total_games}")
 
     if games_in_trie:
         print(f"Percent of games in the trie: {(games_in_trie / total_games) * 100}")

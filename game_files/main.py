@@ -19,7 +19,7 @@ def run_game():
     print("Win by getting 8 cats on the board or 3 cats in a row!")
 
     # Configure game settings
-    ai_depth_setting = 3 # AI search depth - CHANGE UP to 3 (4 will be slow)
+    ai_depth_setting = 2 # AI search depth - CHANGE UP to 3 (4 will be slow)
 
     #--------------------------------------
     # change this number to modify how many
